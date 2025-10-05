@@ -13,6 +13,9 @@ Past data is from curvo.eu.
 * Maximum Drawdown
 * Cumulative Wealth Chart
 
-#### Educational use only. Not an investment advice
+
 
 <img width="1227" height="579" alt="image" src="https://github.com/user-attachments/assets/5cfde4bc-0d54-47d3-b85c-58e2a836db85" />
+
+
+#### Educational use only. Not an investment advice!
