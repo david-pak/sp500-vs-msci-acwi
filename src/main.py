@@ -3,6 +3,44 @@ import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 import math
 
+def period_returns(prices):
+    rt = prices.pct_change().fillna(0.0)
+    #print(rt)
+    return rt
+    
+def standard_deviation(period_returns):
+    stdv = period_returns.std(ddof = 1) * math.sqrt(12)
+    #print(stdv)
+    return stdv
+    
+def cumulative_wealth(period_returns):
+    cwealth = (1 + period_returns).cumprod()
+    #print(cwealth)
+    return cwealth
+
+def cagr(cwealth, years):
+    cagr_val = cwealth.iloc[-1] ** (1 / years) - 1
+    #print(cagr_val)
+    return cagr_val
+
+def best_month(period_returns):
+    best_date = period_returns.idxmax()
+    best_value = period_returns.loc[best_date]
+    #print(best_date, best_value)
+    return (best_date, best_value)
+
+def worst_month(period_returns):
+    worst_date = period_returns.idxmin()
+    worst_value = period_returns.loc[worst_date]
+    #print(worst_date, worst_value)
+    return (worst_date, worst_value)
+    
+def max_drawdown(cwealth):
+    peak = cwealth.cummax()
+    drawdown = (cwealth / peak) - 1
+    #print(min(drawdown))
+    return min(drawdown)
+
 START_DATE = "02/1992"
 END_DATE = "07/2025"
 
@@ -21,35 +59,34 @@ sp_prices = sp["S&P 500"].loc[START_DATE : END_DATE]
 acwi_prices = acwi["MSCI ACWI"].loc[START_DATE : END_DATE]
 
 #Calculate period returns
-sp_rt = sp_prices.pct_change().fillna(0.0)
-acwi_rt = acwi_prices.pct_change().fillna(0.0)
+sp_rt = period_returns(sp_prices)
+acwi_rt = period_returns(acwi_prices)
 
 #Calculate annual standard deviation
-sp_std = sp_rt.std(ddof = 1) * math.sqrt(12)
-acwi_std = acwi_rt.std(ddof = 1) * math.sqrt(12)
+sp_std = standard_deviation(sp_rt)
+acwi_std = standard_deviation(acwi_rt)
 
 #Caculate cumulative wealth
-sp_cwealth = (1 + sp_rt).cumprod()
-acwi_cwealth = (1 + acwi_rt).cumprod()
+sp_cwealth = cumulative_wealth(sp_rt)
+acwi_cwealth = cumulative_wealth(acwi_rt)
 
 #Combine cumulative wealth
 both_cwealth = pd.concat([sp_cwealth, acwi_cwealth], axis = 1, join = "inner")
 both_cwealth.index = pd.to_datetime(both_cwealth.index, format="%m/%Y")
 
 #Calculate Compound Annual Growth Rate
-sp_cagr = (sp_cwealth.iloc[-1]) ** (1 / TOTAL_YEARS) - 1
-acwi_cagr = (acwi_cwealth.iloc[-1]) ** (1 / TOTAL_YEARS) - 1
+sp_cagr = cagr(sp_cwealth, TOTAL_YEARS)
+acwi_cagr = cagr(acwi_cwealth, TOTAL_YEARS)
 
 #Calculate best/worst months
-sp_bdate = sp_rt.idxmax()
-sp_bvalue = sp_rt.loc[sp_bdate]
-sp_wdate = sp_rt.idxmin()
-sp_wvalue = sp_rt.loc[sp_wdate]
+sp_best = best_month(sp_rt)
+sp_worst = worst_month(sp_rt)
+acwi_best = best_month(acwi_rt)
+acwi_worst = worst_month(acwi_rt)
 
-acwi_bdate = acwi_rt.idxmax()
-acwi_bvalue = acwi_rt.loc[acwi_bdate]
-acwi_wdate = acwi_rt.idxmin()
-acwi_wvalue = acwi_rt.loc[acwi_wdate]
+#Calculate max drawdown
+sp_mdd = max_drawdown(sp_cwealth)
+acwi_mdd = max_drawdown(acwi_cwealth)
 
 #Plot cumulative wealth of indicies
 plt.figure(figsize = (10, 5))
@@ -57,11 +94,7 @@ plt.title("Growth of $1 from " + START_DATE + "-" + END_DATE)
 plt.plot(both_cwealth.index, both_cwealth.iloc[:, 0].values, label = both_cwealth.columns[0])
 plt.plot(both_cwealth.index, both_cwealth.iloc[:, 1].values, label = both_cwealth.columns[1])
 plt.legend()
-
-plt.xticks(rotation = 90)
-
 plt.xlabel("Date")
 plt.ylabel("Dollars")
-
 plt.tight_layout()
 plt.show()
