@@ -88,6 +88,12 @@ acwi_worst = worst_month(acwi_rt)
 sp_mdd = max_drawdown(sp_cwealth)
 acwi_mdd = max_drawdown(acwi_cwealth)
 
+#Summary
+summary = {"S&P 500" : [sp_cagr, sp_std, sp_best[0], sp_best[1], sp_worst[0], sp_worst[1], sp_mdd],
+           "MSCI ACWI": [acwi_cagr, acwi_std, acwi_best[0], acwi_best[1], acwi_worst[0], acwi_worst[1], acwi_mdd]}
+df_summary = pd.DataFrame(summary, index = ["CAGR", "ANNUAL VOL", "BEST MONTH", "VALUE", "WORST MONTH", "VALUE", "MAX DRAWDOWN"])
+df_summary.to_excel("../output/output.xlsx", float_format="%.3f", sheet_name = "Summary")
+
 #Plot cumulative wealth of indicies
 plt.figure(figsize = (10, 5))
 plt.title("Growth of $1 from " + START_DATE + "-" + END_DATE)
@@ -98,3 +104,7 @@ plt.xlabel("Date")
 plt.ylabel("Dollars")
 plt.tight_layout()
 plt.show()
+
+
+
+
