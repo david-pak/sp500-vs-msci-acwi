@@ -1,6 +1,5 @@
 import pandas as pd
 import matplotlib.pyplot as plt
-import matplotlib.dates as mdates
 import math
 
 def period_returns(prices):
@@ -104,7 +103,3 @@ plt.xlabel("Date")
 plt.ylabel("Dollars")
 plt.tight_layout()
 plt.show()
-
-
-
-
