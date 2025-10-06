@@ -4,7 +4,7 @@ This project compares performance of two broad stock market indices:
 * S&P 500 (large US companies)
 * MSCI ACWI (globally diversified stock market index)
 
-It uses past performance data covering more than 31 years, from February 1992 to July 2025. Historical data are from curvo.eu.
+It uses past performance data covering more than 31 years, from February 1992 to July 2025. Historical data are from [curvo.eu](https://curvo.eu)
 
 #
 
